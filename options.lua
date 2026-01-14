@@ -28,6 +28,7 @@ local handleEvent = function(frame, event, ...)
             texture:SetTexture("Interface\\AddOns\\CursorHighlight\\Ring_30px")
             local color = _G["CursorHighlightConfig"]["color"]
             texture:SetVertexColor(color[1], color[2], color[3], color[4])
+            texture:SetBlendMode("ADD")
 
             -- Update the position of the frame every rendered frame.
 
