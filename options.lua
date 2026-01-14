@@ -1,6 +1,8 @@
 local thisAddonName, namespace = ...
 
-local defaultConfig = {1, 0, 1, 0.6}  -- r, g, b, a
+local defaultConfig = {
+    ["color"] = {1, 0, 1, 0.6}, -- r, g, b, a
+}
 
 local handleEvent = function(frame, event, ...)
     if event == "ADDON_LOADED" then
@@ -24,12 +26,8 @@ local handleEvent = function(frame, event, ...)
             texture:SetAllPoints(frame)
 
             texture:SetTexture("Interface\\AddOns\\CursorHighlight\\Ring_30px")
-            texture:SetVertexColor(
-                _G["CursorHighlightConfig"][1],
-                _G["CursorHighlightConfig"][2],
-                _G["CursorHighlightConfig"][3],
-                _G["CursorHighlightConfig"][4]
-            )
+            local color = _G["CursorHighlightConfig"]["color"]
+            texture:SetVertexColor(color[1], color[2], color[3], color[4])
 
             -- Update the position of the frame every rendered frame.
 
@@ -54,11 +52,11 @@ end
 
 local Options = {
     ["setColor"] = function(info, r, g, b, a)
-        _G["CursorHighlightConfig"] = {r, g, b, a}
+        _G["CursorHighlightConfig"]["color"] = {r, g, b, a}
     end,
 
     ["getColor"] = function(info)
-        local config = _G["CursorHighlightConfig"]
+        local config = _G["CursorHighlightConfig"]["color"]
         return config[1], config[2], config[3], config[4]
     end,
 
