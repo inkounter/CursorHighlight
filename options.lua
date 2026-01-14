@@ -5,9 +5,49 @@ local defaultConfig = {1, 0, 1, 0.6}  -- r, g, b, a
 local handleEvent = function(frame, event, ...)
     if event == "ADDON_LOADED" then
         local addon = ...
-        if addon == thisAddonName and _G["CursorHighlightConfig"] == nil then
-            _G["CursorHighlightConfig"] = defaultConfig
+        if addon == thisAddonName then
             frame:UnregisterEvent("ADDON_LOADED")
+
+            if _G["CursorHighlightConfig"] == nil then
+                _G["CursorHighlightConfig"] = defaultConfig
+            end
+
+            local frame = CreateFrame(
+                "Frame",
+                "CursorHighlightFrame",
+                UIParent
+            )
+            frame:SetSize(32, 32)
+            frame:SetPoint("CENTER")
+
+            local texture = frame:CreateTexture(nil, "BACKGROUND")
+            texture:SetAllPoints(frame)
+
+            texture:SetTexture("Interface\\AddOns\\CursorHighlight\\Ring_30px")
+            texture:SetVertexColor(
+                _G["CursorHighlightConfig"][1],
+                _G["CursorHighlightConfig"][2],
+                _G["CursorHighlightConfig"][3],
+                _G["CursorHighlightConfig"][4]
+            )
+
+            -- Update the position of the frame every rendered frame.
+
+            frame:SetScript(
+                "OnUpdate",
+                function(self)
+                    local x, y = GetCursorPosition()
+                    local scale = UIParent:GetEffectiveScale()
+
+                    self:ClearAllPoints()
+                    self:SetPoint(
+                        "CENTER",
+                        UIParent,
+                        "BOTTOMLEFT",
+                        x / scale,
+                        y / scale)
+                end
+            )
         end
     end
 end
