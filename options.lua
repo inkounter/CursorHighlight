@@ -5,6 +5,7 @@ local defaultConfig = {
     ["size"] = 32,
     ["blend"] = "ADD",
     ["texture"] = "Interface\\AddOns\\CursorHighlight\\Ring_30px",
+    ["strata"] = "TOOLTIP",
 }
 
 local highlightFrame = nil
@@ -38,6 +39,15 @@ local Options = {
         return _G["CursorHighlightConfig"]["blend"]
     end,
 
+    ["setStrata"] = function(self, info, value)
+        _G["CursorHighlightConfig"]["strata"] = value
+        self:redrawHighlight()
+    end,
+
+    ["getStrata"] = function(self, info)
+        return _G["CursorHighlightConfig"]["strata"]
+    end,
+
     ["setTexture"] = function(self, info, value)
         _G["CursorHighlightConfig"]["texture"] = value
         self:redrawHighlight()
@@ -55,7 +65,7 @@ local Options = {
             table.insert(_G["CursorHighlightConfig"]["color"], value)
         end
 
-        for _, key in ipairs({"size", "blend", "texture"}) do
+        for _, key in ipairs({"size", "blend", "texture", "strata"}) do
             _G["CursorHighlightConfig"][key] = defaultConfig[key]
         end
 
@@ -65,6 +75,7 @@ local Options = {
     ["redrawHighlight"] = function(self)
         local config = _G["CursorHighlightConfig"]
         highlightFrame:SetSize(config["size"], config["size"])
+        highlightFrame:SetFrameStrata(config["strata"])
         highlightFrame.texture:SetTexture(config["texture"])
         highlightFrame.texture:SetVertexColor(
             config["color"][1],
@@ -115,10 +126,38 @@ local Options = {
                     ["get"] = function(...) return self:getBlend(...) end,
                 },
 
+                ["strata"] = {
+                    ["type"] = "select",
+                    ["name"] = "Strata",
+                    ["order"] = 4,
+                    ["values"] = {
+                        ["BACKGROUND"] = "BACKGROUND",
+                        ["LOW"] = "LOW",
+                        ["MEDIUM"] = "MEDIUM",
+                        ["HIGH"] = "HIGH",
+                        ["DIALOG"] = "DIALOG",
+                        ["FULLSCREEN"] = "FULLSCREEN",
+                        ["FULLSCREEN_DIALOG"] = "FULLSCREEN_DIALOG",
+                        ["TOOLTIP"] = "TOOLTIP",
+                    },
+                    ["sorting"] = {
+                        "BACKGROUND",
+                        "LOW",
+                        "MEDIUM",
+                        "HIGH",
+                        "DIALOG",
+                        "FULLSCREEN",
+                        "FULLSCREEN_DIALOG",
+                        "TOOLTIP",
+                    },
+                    ["set"] = function(...) return self:setStrata(...) end,
+                    ["get"] = function(...) return self:getStrata(...) end,
+                },
+
                 ["texture"] = {
                     ["type"] = "input",
                     ["name"] = "Texture Path",
-                    ["order"] = 4,
+                    ["order"] = 5,
                     ["width"] = "full",
                     ["set"] = function(...) return self:setTexture(...) end,
                     ["get"] = function(...) return self:getTexture(...) end,
@@ -127,7 +166,7 @@ local Options = {
                 ["resetDefault"] = {
                     ["type"] = "execute",
                     ["name"] = "Reset to Defaults",
-                    ["order"] = 5,
+                    ["order"] = 6,
                     ["func"] = function(...) return self:defaultOptions(...) end,
                 }
             },
