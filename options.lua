@@ -9,58 +9,6 @@ local defaultConfig = {
 
 local highlightFrame = nil
 
-local handleAddonLoaded = function(frame, event, ...)
-    if event == "ADDON_LOADED" then
-        local addon = ...
-        if addon == thisAddonName then
-            frame:UnregisterEvent("ADDON_LOADED")
-
-            if _G["CursorHighlightConfig"] == nil then
-                _G["CursorHighlightConfig"] = defaultConfig
-            end
-
-            -- Create the frame and texture.
-
-            highlightFrame = CreateFrame(
-                "Frame",
-                "CursorHighlightFrame",
-                UIParent
-            )
-            highlightFrame:SetSize(32, 32)
-            highlightFrame:SetPoint("CENTER")
-
-            highlightFrame.texture = highlightFrame:CreateTexture(
-                nil,
-                "BACKGROUND"
-            )
-            highlightFrame.texture:SetAllPoints(highlightFrame)
-
-            highlightFrame.texture:SetTexture("Interface\\AddOns\\CursorHighlight\\Ring_30px")
-            local color = _G["CursorHighlightConfig"]["color"]
-            highlightFrame.texture:SetVertexColor(color[1], color[2], color[3], color[4])
-            highlightFrame.texture:SetBlendMode("ADD")
-
-            -- Update the position of the frame every rendered frame.
-
-            highlightFrame:SetScript(
-                "OnUpdate",
-                function(self)
-                    local x, y = GetCursorPosition()
-                    local scale = UIParent:GetEffectiveScale()
-
-                    self:ClearAllPoints()
-                    self:SetPoint(
-                        "CENTER",
-                        UIParent,
-                        "BOTTOMLEFT",
-                        x / scale,
-                        y / scale)
-                end
-            )
-        end
-    end
-end
-
 local Options = {
     ["setColor"] = function(self, info, r, g, b, a)
         _G["CursorHighlightConfig"]["color"] = {r, g, b, a}
@@ -190,6 +138,56 @@ local Options = {
         return acd:AddToBlizOptions(thisAddonName)
     end,
 }
+
+local handleAddonLoaded = function(frame, event, ...)
+    if event == "ADDON_LOADED" then
+        local addon = ...
+        if addon == thisAddonName then
+            frame:UnregisterEvent("ADDON_LOADED")
+
+            if _G["CursorHighlightConfig"] == nil then
+                _G["CursorHighlightConfig"] = defaultConfig
+            end
+
+            -- Create the frame and texture.
+
+            highlightFrame = CreateFrame(
+                "Frame",
+                "CursorHighlightFrame",
+                UIParent
+            )
+            highlightFrame:SetPoint("CENTER")
+
+            highlightFrame.texture = highlightFrame:CreateTexture(
+                nil,
+                "BACKGROUND"
+            )
+            highlightFrame.texture:SetAllPoints(highlightFrame)
+
+            -- Update the position of the frame every rendered frame.
+
+            highlightFrame:SetScript(
+                "OnUpdate",
+                function(self)
+                    local x, y = GetCursorPosition()
+                    local scale = UIParent:GetEffectiveScale()
+
+                    self:ClearAllPoints()
+                    self:SetPoint(
+                        "CENTER",
+                        UIParent,
+                        "BOTTOMLEFT",
+                        x / scale,
+                        y / scale)
+                end
+            )
+
+            -- Fill out the other properties.
+
+            Options:redrawHighlight()
+        end
+    end
+end
 
 local optionsFrame, optionsCategoryId = Options:register()
 
