@@ -1,7 +1,7 @@
 ## Interface: 110207
 ## Author: Inkounter
 ## Title: Cursor Highlight
-## Version: 1.0
+## Version: 1.0.0
 ## Notes: Anchors a texture to your mouse cursor.
 ## SavedVariables: CursorHighlightConfig
 
