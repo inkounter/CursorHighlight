@@ -1,4 +1,4 @@
-## Interface: 110207
+## Interface: 120000
 ## Author: Inkounter
 ## Title: Cursor Highlight
 ## Version: 1.0.0
